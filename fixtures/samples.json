@@ -1,0 +1,77 @@
+[
+  {
+    "sample_code": "SM-OF-E1-A-001",
+    "outfall_code": "OF-E1-A",
+    "permit_ref": "DP-2026-E01",
+    "metrics": {
+      "cod": 42.0,
+      "nh3n": 3.2,
+      "tp": 0.28
+    },
+    "flow_m3h": 2800,
+    "generation": 2,
+    "status": "已封批",
+    "adjudicated_at": "2026-11-10T11:00:00",
+    "created_at": "2026-11-10T10:30:00"
+  },
+  {
+    "sample_code": "SM-OF-E1-A-002",
+    "outfall_code": "OF-E1-A",
+    "permit_ref": "DP-2026-E01",
+    "metrics": {
+      "cod": 58.0,
+      "nh3n": 4.1,
+      "tp": 0.33
+    },
+    "flow_m3h": 2900,
+    "generation": 1,
+    "status": "旁路挂起",
+    "adjudicated_at": null,
+    "created_at": "2026-11-18T09:00:00"
+  },
+  {
+    "sample_code": "SM-OF-W2-A-001",
+    "outfall_code": "OF-W2-A",
+    "permit_ref": "DP-2026-W02",
+    "metrics": {
+      "cod": 36.0,
+      "nh3n": 2.8,
+      "tp": 0.22
+    },
+    "flow_m3h": 1500,
+    "generation": 1,
+    "status": "已准排",
+    "adjudicated_at": "2026-11-15T14:00:00",
+    "created_at": "2026-11-15T13:20:00"
+  },
+  {
+    "sample_code": "SM-OF-N3-A-001",
+    "outfall_code": "OF-N3-A",
+    "permit_ref": "DP-2026-N03",
+    "metrics": {
+      "cod": 24.0,
+      "nh3n": 2.1,
+      "tp": 0.18
+    },
+    "flow_m3h": 2000,
+    "generation": 1,
+    "status": "已裁定",
+    "adjudicated_at": "2026-11-20T08:40:00",
+    "created_at": "2026-11-20T08:10:00"
+  },
+  {
+    "sample_code": "SM-OF-E1-B-001",
+    "outfall_code": "OF-E1-B",
+    "permit_ref": "DP-2026-E01",
+    "metrics": {
+      "cod": 31.0,
+      "nh3n": 2.4,
+      "tp": 0.19
+    },
+    "flow_m3h": 1200,
+    "generation": 1,
+    "status": "已裁定",
+    "adjudicated_at": "2026-11-19T16:00:00",
+    "created_at": "2026-11-19T15:30:00"
+  }
+]

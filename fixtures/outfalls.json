@@ -1,0 +1,52 @@
+[
+  {
+    "outfall_code": "OF-E1-A",
+    "plant_code": "PL-EAST-01",
+    "river_reach": "东城河下游",
+    "cod_limit": 50,
+    "nh3n_limit": 5,
+    "tp_limit": 0.5,
+    "status": "开放",
+    "created_at": "2026-11-01T09:00:00"
+  },
+  {
+    "outfall_code": "OF-E1-B",
+    "plant_code": "PL-EAST-01",
+    "river_reach": "东城河旁路渠",
+    "cod_limit": 40,
+    "nh3n_limit": 4,
+    "tp_limit": 0.4,
+    "status": "开放",
+    "created_at": "2026-11-01T09:05:00"
+  },
+  {
+    "outfall_code": "OF-W2-A",
+    "plant_code": "PL-WEST-02",
+    "river_reach": "西湾主渠",
+    "cod_limit": 50,
+    "nh3n_limit": 5,
+    "tp_limit": 0.5,
+    "status": "开放",
+    "created_at": "2026-11-01T09:10:00"
+  },
+  {
+    "outfall_code": "OF-N3-A",
+    "plant_code": "PL-NORTH-03",
+    "river_reach": "北岸入江口",
+    "cod_limit": 30,
+    "nh3n_limit": 3,
+    "tp_limit": 0.3,
+    "status": "开放",
+    "created_at": "2026-11-01T09:15:00"
+  },
+  {
+    "outfall_code": "OF-S4-A",
+    "plant_code": "PL-SOUTH-04",
+    "river_reach": "南港感潮口",
+    "cod_limit": 50,
+    "nh3n_limit": 5,
+    "tp_limit": 0.5,
+    "status": "停用",
+    "created_at": "2026-11-01T09:20:00"
+  }
+]

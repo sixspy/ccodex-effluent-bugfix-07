@@ -1,0 +1,16 @@
+[
+  {
+    "from_sample": "SM-OF-E1-A-001",
+    "to_sample": "SM-OF-E1-A-002",
+    "edge_type": "复测续批",
+    "detail": "东城主口二次采样",
+    "created_at": "2026-11-18T09:05:00"
+  },
+  {
+    "from_sample": "SM-OF-W2-A-001",
+    "to_sample": null,
+    "edge_type": "准排锚点",
+    "detail": "西湾主渠准排留痕",
+    "created_at": "2026-11-15T14:25:00"
+  }
+]

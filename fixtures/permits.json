@@ -1,0 +1,35 @@
+[
+  {
+    "permit_code": "DP-2026-E01",
+    "plant_code": "PL-EAST-01",
+    "quota_m3d": 75000,
+    "cod_cap": 50,
+    "nh3n_cap": 5,
+    "tp_cap": 0.5,
+    "period_label": "2026Q4",
+    "status": "有效",
+    "created_at": "2026-11-01T10:00:00"
+  },
+  {
+    "permit_code": "DP-2026-W02",
+    "plant_code": "PL-WEST-02",
+    "quota_m3d": 40000,
+    "cod_cap": 50,
+    "nh3n_cap": 5,
+    "tp_cap": 0.5,
+    "period_label": "2026Q4",
+    "status": "有效",
+    "created_at": "2026-11-01T10:05:00"
+  },
+  {
+    "permit_code": "DP-2026-N03",
+    "plant_code": "PL-NORTH-03",
+    "quota_m3d": 55000,
+    "cod_cap": 30,
+    "nh3n_cap": 3,
+    "tp_cap": 0.3,
+    "period_label": "2026Q4",
+    "status": "有效",
+    "created_at": "2026-11-01T10:10:00"
+  }
+]

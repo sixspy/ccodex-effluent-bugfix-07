@@ -1,0 +1,12 @@
+[
+  {
+    "sample_code": "SM-OF-E1-A-002",
+    "hold_key": "EX-SM-OF-E1-A-002-COD",
+    "exceed_metric": "COD",
+    "measured": 58.0,
+    "limit_value": 50.0,
+    "status": "开放",
+    "opened_at": "2026-11-18T09:00:00",
+    "note": "入库自动挂起"
+  }
+]

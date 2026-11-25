@@ -1,0 +1,10 @@
+[
+  {
+    "sample_code": "SM-OF-E1-A-001",
+    "sample_generation": 2,
+    "snapshot": "COD=42.0 NH3-N=3.20 TP=0.280",
+    "seal_ref": "SL-SM-OF-E1-A-001-G2",
+    "status": "已封批",
+    "sealed_at": "2026-11-10T12:00:00"
+  }
+]
