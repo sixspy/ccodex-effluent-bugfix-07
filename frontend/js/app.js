@@ -36,6 +36,7 @@ createApp({
     const lineageEdges = ref([]);
     const labJobs = ref([]);
     const sludgeJobs = ref([]);
+    const sludgeInfo = ref({});
     const plantDetail = ref(null);
     const sampleDetail = ref(null);
     const reconOne = ref(null);
@@ -65,7 +66,7 @@ createApp({
       from_sample_id: 1, to_sample_id: 2, edge_type: "复测续批", detail: "试验血缘",
     });
     const labForm = ref({ sample_code: "SM-OF-E1-A-001", courier_slot: "A1" });
-    const sludgeForm = ref({ plant_id: 1, digester_bay: "D-01" });
+    const sludgeForm = ref({ plant_id: 1, digester_bay: "D-01", mode: "dry_run" });
 
     function logout() {
       token.value = "";
@@ -137,7 +138,8 @@ createApp({
       permits.value = (await api.permits()).items;
       lineageEdges.value = (await api.lineage()).items;
       labJobs.value = (await api.labJobs()).items;
-      sludgeJobs.value = (await api.sludgeJobs()).items;
+      sludgeInfo.value = await api.sludgeJobs();
+      sludgeJobs.value = sludgeInfo.value.items || [];
       if (!releaseForm.value.sample_id && releasableSamples.value.length) {
         releaseForm.value.sample_id = releasableSamples.value[0].id;
       }
@@ -171,6 +173,12 @@ createApp({
         snapshot: sealForm.value.snapshot || null,
       }));
     }
+    async function createShadowSeal() {
+      await flash(() => api.createShadowSeal({
+        sample_id: sealForm.value.sample_id,
+        snapshot: sealForm.value.snapshot || null,
+      }));
+    }
     async function createPermit() { await flash(() => api.createPermit(permitForm.value)); }
     async function createLineage() {
       await flash(() => api.createLineage({
@@ -200,8 +208,11 @@ createApp({
       await flash(() => api.sludgeEnqueue({
         plant_id: sludgeForm.value.plant_id,
         digester_bay: sludgeForm.value.digester_bay,
-        mode: "dry_run",
+        mode: sludgeForm.value.mode,
       }));
+    }
+    async function completeSludge(job) {
+      await flash(() => api.sludgeOutbound(job.id));
     }
 
     watch(tab, async () => {
@@ -219,14 +230,14 @@ createApp({
     return {
       token, user, username, password, err, actionErr, actionOk, tab, nav,
       dash, plants, outfalls, samples, exceeds, releases, seals, permits,
-      lineageEdges, labJobs, sludgeJobs, plantDetail, sampleDetail,
+      lineageEdges, labJobs, sludgeJobs, sludgeInfo, plantDetail, sampleDetail,
       reconOne, reconAllItems, proofOne, reconCode, proofCode,
       plantForm, outfallForm, sampleForm, releaseForm, sealForm, permitForm,
       lineageForm, labForm, sludgeForm, releasableSamples, sealableSamples,
       login, logout, refresh, statusClass, sampleClass, fmtMetrics,
       loadPlant, loadSample, createPlant, createOutfall, createSample,
-      closeExceed, createRelease, createSeal, createPermit, createLineage,
-      loadReconcile, loadReconcileOne, loadProof, enqueueLab, enqueueSludge,
+      closeExceed, createRelease, createSeal, createShadowSeal, createPermit, createLineage,
+      loadReconcile, loadReconcileOne, loadProof, enqueueLab, enqueueSludge, completeSludge,
     };
   },
   template: `

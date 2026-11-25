@@ -38,6 +38,7 @@ export function createApi(getToken, onUnauthorized) {
     createRelease: (body) => request("/api/releases", { method: "POST", body: JSON.stringify(body) }),
     seals: () => request("/api/seals"),
     createSeal: (body) => request("/api/seals", { method: "POST", body: JSON.stringify(body) }),
+    createShadowSeal: (body) => request("/api/seals/shadow", { method: "POST", body: JSON.stringify(body) }),
     permits: () => request("/api/permits"),
     permit: (code) => request("/api/permits/" + encodeURIComponent(code)),
     createPermit: (body) => request("/api/permits", { method: "POST", body: JSON.stringify(body) }),
@@ -50,6 +51,7 @@ export function createApi(getToken, onUnauthorized) {
     labEnqueue: (body) => request("/api/stubs/lab-courier", { method: "POST", body: JSON.stringify(body) }),
     sludgeJobs: () => request("/api/stubs/sludge-plan"),
     sludgeEnqueue: (body) => request("/api/stubs/sludge-plan", { method: "POST", body: JSON.stringify(body) }),
+    sludgeOutbound: (jobId) => request("/api/stubs/sludge-plan/outbound?job_id=" + jobId, { method: "POST" }),
     audit: () => request("/api/audit"),
   };
 }

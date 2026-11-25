@@ -76,12 +76,19 @@ def _reconcile_permit(conn, permit_code: str) -> dict:
                 "matched": ok,
             }
         )
+    # effluent-bugfix-07：对账只认正式封批，影子封批草稿不得当已封
     seal_rows = conn.execute(
         """SELECT d.seal_ref, d.sample_generation, s.sample_code
            FROM discharge_seals d JOIN sample_batches s ON s.id=d.sample_id
-           WHERE s.permit_ref=?""",
+           WHERE s.permit_ref=? AND d.status='已封批'""",
         (permit_code,),
     ).fetchall()
+    shadow_count = conn.execute(
+        """SELECT COUNT(*) c FROM discharge_seals d
+           JOIN sample_batches s ON s.id=d.sample_id
+           WHERE s.permit_ref=? AND d.status='影子封批'""",
+        (permit_code,),
+    ).fetchone()["c"]
     return {
         "permit_code": permit_code,
         "quota_m3d": permit["quota_m3d"],
@@ -89,6 +96,7 @@ def _reconcile_permit(conn, permit_code: str) -> dict:
         "balanced": all_ok,
         "proof_ready": all_ok and len(seal_rows) >= 1,
         "seal_count": len(seal_rows),
+        "shadow_seal_count": shadow_count,
         "samples": details,
         "seals": [dict(x) for x in seal_rows],
     }

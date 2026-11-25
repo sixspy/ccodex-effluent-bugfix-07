@@ -9,6 +9,7 @@ from auth import AuthHeader, require_user, require_writer
 from db import connect, now_iso, write_audit
 from locks import release, require_lock
 from models import SampleIn
+from sludge_plan_stub_svc import sludge_outbound_status
 from validators import (
     adjudicate_exceed,
     metric_summary,
@@ -36,7 +37,7 @@ def _next_sample_code(conn, outfall_id: int) -> str:
 def list_samples(authorization: AuthHeader = None, status: str | None = None):
     require_user(authorization)
     with connect() as conn:
-        q = """SELECT s.*, o.outfall_code, p.plant_code FROM sample_batches s
+        q = """SELECT s.*, o.outfall_code, o.plant_id, p.plant_code FROM sample_batches s
                JOIN outfalls o ON o.id=s.outfall_id
                JOIN plants p ON p.id=o.plant_id"""
         if status:
@@ -46,9 +47,16 @@ def list_samples(authorization: AuthHeader = None, status: str | None = None):
         else:
             rows = conn.execute(q + " ORDER BY s.id DESC").fetchall()
         items = []
+        outbound_cache: dict[int, dict] = {}
         for r in rows:
             d = dict(r)
             d["metrics"] = json.loads(d["metrics"] or "{}")
+            # 五页同源：出库齐套口径与空桩页同一出处
+            pid = d["plant_id"]
+            if pid not in outbound_cache:
+                outbound_cache[pid] = sludge_outbound_status(conn, pid)
+            d["outbound_ready"] = outbound_cache[pid]["ready"]
+            d["sludge_status"] = outbound_cache[pid]["status"]
             items.append(d)
         return {"items": items}
 
@@ -58,7 +66,7 @@ def get_sample(sample_id: int, authorization: AuthHeader = None):
     require_user(authorization)
     with connect() as conn:
         row = conn.execute(
-            """SELECT s.*, o.outfall_code, o.cod_limit, o.nh3n_limit, o.tp_limit,
+            """SELECT s.*, o.outfall_code, o.plant_id, o.cod_limit, o.nh3n_limit, o.tp_limit,
                       p.name plant_name
                FROM sample_batches s
                JOIN outfalls o ON o.id=s.outfall_id
@@ -70,6 +78,9 @@ def get_sample(sample_id: int, authorization: AuthHeader = None):
             raise HTTPException(404, "采样批次不存在")
         data = dict(row)
         data["metrics"] = json.loads(data["metrics"] or "{}")
+        outbound = sludge_outbound_status(conn, data["plant_id"])
+        data["outbound_ready"] = outbound["ready"]
+        data["sludge_status"] = outbound["status"]
         holds = conn.execute(
             "SELECT * FROM exceed_holds WHERE sample_id=? ORDER BY id DESC",
             (sample_id,),

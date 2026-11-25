@@ -62,6 +62,14 @@ def test_sample_exceed_release_seal_flow():
         json={"sample_id": created["id"], "officer": "验收员"},
     )
     assert release.status_code == 200
+    # effluent-bugfix-07：封批前污泥出库须齐套（登记出库→已出库）
+    job = c.post(
+        "/api/stubs/sludge-plan",
+        headers=h,
+        json={"plant_id": of["plant_id"], "digester_bay": "D-SMOKE-01", "mode": "enqueue"},
+    ).json()
+    done = c.post(f"/api/stubs/sludge-plan/outbound?job_id={job['id']}", headers=h)
+    assert done.status_code == 200
     seal = c.post("/api/seals", headers=h, json={"sample_id": created["id"]})
     assert seal.status_code == 200
     assert seal.json()["generation"] == 2

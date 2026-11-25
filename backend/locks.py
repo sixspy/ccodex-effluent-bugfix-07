@@ -1,4 +1,8 @@
-"""排放批争用锁。"""
+"""排放批争用锁。
+
+effluent-bugfix-07：抢批锁原子占位——INSERT OR IGNORE 一锤定音，
+同主重入放行，异主记争用痕并 409；争用痕随调用方提交落库。
+"""
 from __future__ import annotations
 
 from fastapi import APIRouter, HTTPException
@@ -10,21 +14,24 @@ router = APIRouter(tags=["locks"])
 
 
 def require_lock(conn, lock_key: str, holder: str) -> None:
+    cur = conn.execute(
+        "INSERT OR IGNORE INTO effluent_locks(lock_key,holder,acquired_at) VALUES (?,?,?)",
+        (lock_key, holder, now_iso()),
+    )
+    if cur.rowcount == 1:
+        return
     row = conn.execute(
         "SELECT holder FROM effluent_locks WHERE lock_key=?", (lock_key,)
     ).fetchone()
-    if row and row["holder"] != holder:
-        conn.execute(
-            """INSERT INTO contention_log(lock_key,actor,action,detail,created_at)
-               VALUES (?,?,?,?,?)""",
-            (lock_key, holder, "争用失败", f"持有人={row['holder']}", now_iso()),
-        )
-        raise HTTPException(409, f"锁被占用：{lock_key} 持有人 {row['holder']}")
-    if not row:
-        conn.execute(
-            "INSERT INTO effluent_locks(lock_key,holder,acquired_at) VALUES (?,?,?)",
-            (lock_key, holder, now_iso()),
-        )
+    if row and row["holder"] == holder:
+        return  # 同主重入
+    holder_now = row["holder"] if row else "未知"
+    conn.execute(
+        """INSERT INTO contention_log(lock_key,actor,action,detail,created_at)
+           VALUES (?,?,?,?,?)""",
+        (lock_key, holder, "争用失败", f"持有人={holder_now}", now_iso()),
+    )
+    raise HTTPException(409, f"锁被占用：{lock_key} 持有人 {holder_now}")
 
 
 def release(conn, lock_key: str, holder: str) -> None:
@@ -51,11 +58,17 @@ def list_locks(authorization: AuthHeader = None):
 @router.post("/api/locks/acquire")
 def acquire(lock_key: str, authorization: AuthHeader = None):
     user = require_writer(authorization)
-    with connect() as conn:
+    conn = connect()
+    try:
         require_lock(conn, lock_key, user)
         write_audit(conn, user, "lock_acquire", lock_key, {})
         conn.commit()
         return {"ok": True, "lock_key": lock_key, "holder": user}
+    except HTTPException:
+        conn.commit()  # 败方争用痕落库
+        raise
+    finally:
+        conn.close()
 
 
 @router.post("/api/locks/release")
